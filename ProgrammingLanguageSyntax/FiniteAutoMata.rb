@@ -156,23 +156,25 @@ class NFASimulation < Struct.new(:nfa_creator)
   end
 
   # get all states by recursive
-  # compute rule about states
-  def generate_rulebook(states)
-    # new rules, [one state to all character] * states.size
-    rules = states.flat_map { |state| rules_for state}
-    # all rules
+  # compute rule by states
+  # first pass Set[Set[start_states]]
+  def translate_states_and_rules(states)
+    # new rules, one state(set of states) to all character
+    rules = states.flat_map { |state| rules_for state }
+    # set of states that a state can reach(nfa.next_state)
+    # treated as a new state
     more_states = rules.map(&:next_state).to_set
     # if true, then all states rule had been added to rules
     if more_states.subset? states
       [states, rules]
     else
-      generate_rulebook(states + more_states)
+      translate_states_and_rules(states + more_states)
     end
   end
 
   def to_dfa_creator
     start_state = nfa_creator.to_nfa.current_states
-    states, rules = generate_rulebook Set[start_state]
+    states, rules = translate_states_and_rules Set[start_state]
     accept_states = states.select { |state| nfa_creator.to_nfa(state).accept? }
     DFACreator.new(start_state, accept_states, DFARuleBook.new(rules))
   end
