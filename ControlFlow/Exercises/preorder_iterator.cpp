@@ -62,7 +62,7 @@ private:
             return _curNode = FindNextNode(_curNode);
         }
 
-        T operator*()
+        T& operator*()
         {
             return _curNode->_val;
         }
