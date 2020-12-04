@@ -1,0 +1,11 @@
+desc 'run all test in spec'
+
+task :test do
+  sh('export RUBYOPT="-W:no-experimental"') # close pattern matching warning
+  Dir.open((File.dirname __FILE__) + '/spec')
+      .each
+      .filter { |spec| %w[. .. spec_helper].none? spec }
+      .each { |spec|
+        sh("bundle exec rspec spec/#{spec}")
+      }
+end

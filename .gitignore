@@ -1,3 +1,9 @@
 .history
 .vscode
 test
+bin
+.bundle
+.idea
+.rspec
+.DS_Store
+Gemfile.lock
